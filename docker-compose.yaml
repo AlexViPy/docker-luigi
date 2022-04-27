@@ -1,0 +1,42 @@
+version: '3'
+networks:
+  luigi-net:
+volumes:
+  postgres_data:
+
+services:
+  luigid:
+    container_name: luigid
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8082
+    volumes:
+      - .:/home/luigi
+    environment:
+      LUIGI_TASK_HISTORY_DB_CONNECTION: postgresql+psycopg2://luigi:luigi@db:5432/luigi
+      LUIGI_SCHEDULER_RECORD_TASK_HISTORY: "true"
+      TZ: Europe/Moscow
+    depends_on:
+      - db
+    restart: on-failure:3
+    networks:
+      luigi-net:
+
+  db:
+    container_name: pg
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: luigi
+      POSTGRES_PASSWORD: luigi
+      POSTGRES_DB: luigi
+      POSTGRES_PORT: 5432
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    networks:
+      luigi-net:
