@@ -28,8 +28,8 @@ ENV PYTHONPATH ${LUIGI_HOME}
 COPY ./configs ${LUIGI_HOME}/configs
 COPY ./src ${LUIGI_HOME}/src
 COPY ./tasks ${LUIGI_HOME}/tasks
-RUN touch src/logs/luigi.log && chmod 644 src/logs/luigi.log
-RUN touch src/state/luigi-state.pickle && chmod 644 src/state/luigi-state.pickle
+RUN touch ${LUIGI_HOME}/src/logs/luigi.log && chmod 644 ${LUIGI_HOME}/src/logs/luigi.log
+RUN touch ${LUIGI_HOME}/src/state/luigi-state.pickle && chmod 644 ${LUIGI_HOME}/src/state/luigi-state.pickle
 
 # install requirements
 COPY ./scripts ${LUIGI_HOME}/scripts
@@ -45,6 +45,5 @@ RUN touch /var/log/cron.log
 # supervisor settings
 COPY supervisord.conf /etc/supervisor/
 RUN mkdir -p /var/log/supervisor 
-
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
